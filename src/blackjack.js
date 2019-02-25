@@ -92,13 +92,29 @@ const reducer = (state, action) => {
     }
 };
 
+function cardValue(card) {
+    if (card.face ==='A') {
+        return 11
+    } if ('JQK'.indexOf(card.face) >= 0) {
+        return 10
+    } else {
+        return card.face
+    }
+}
+
+function handValue(hand) {
+    return hand.map(cardValue).reduce((a,b) => a + b, 0)
+}
 //all of decks are "stored" here.
 const store = redux.createStore(reducer);
 store.subscribe(() => {
     const state = store.getState();
+    const dealerScore = handValue(state.dealer);
+    const playerScore = handValue(state.player);
+
     console.log('deck:', state.deck.length);
-    console.log('dealer:', state.dealer);
-    console.log('player:', state.player);
+    console.log(dealerScore, 'dealer:', state.dealer);
+    console.log(playerScore, 'player:', state.player);
     console.log();
 });
 
