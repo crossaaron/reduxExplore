@@ -8,14 +8,13 @@ const redux = require('redux');
 //shuffle - shuffle the deck
 //deal -  give two cards to dealer and player
 //hit - give one card to player
-//stay - end current hand (stay in game)
-//fold - end current hand (quit)
+//finish round - return all cards back to deck
 
-const storeStructure {
-    deck: [],
-    dealer: [],
-    player: [],
-}
+// const storeStructure {
+//     deck: [],
+//     dealer: [],
+//     player: [],
+// }
 
 function createDeck() {
     const suits = ['hearts', 'diamonds', 'spades', 'clubs'];
@@ -41,7 +40,7 @@ const reducer = (state, action) => {
         }
     }
 
-    switch (action,type) {
+    switch (action.type) {
         case 'DEAL': {
             const copy = [...state.deck]
             return {
@@ -58,8 +57,61 @@ const reducer = (state, action) => {
                 player: [...state.player, copy.pop()]
             }
         }
+
+        case 'SHUFFLE': {
+            const copy = [...state.deck];
+        // shuffle deck with Fisher-Yates algorithm
+        // swap every index of array with random index
+            for (let index in copy) {
+                // pick a random index
+                let swapIndex = Math.floor(Math.random() * copy.length);
+                // swap 2 cards between current index and random index
+                let tempCard = copy[swapIndex];
+
+                copy[swapIndex] = copy[index];
+                copy[index] = tempCard;
+            }
+
+            return {
+                deck: copy,
+                dealer: state.dealer,
+                player: state.player
+            }
+        }
+
+        case 'FINISH HAND': {
+            return {
+                deck: [...state.deck, ...state.dealer, ...state.player],
+                dealer: [],
+                player: []
+            }
+        }
         default: {
             return state
         }
     }
 };
+
+//all of decks are "stored" here.
+const store = redux.createStore(reducer);
+store.subscribe(() => {
+    const state = store.getState();
+    console.log('deck:', state.deck.length);
+    console.log('dealer:', state.dealer);
+    console.log('player:', state.player);
+    console.log();
+});
+
+
+//dispatching the actions is the only way to interact with the store.
+// DOES NOT AFFECT THE STATE ABOVE IN THE  ORIGINAL REDUCER
+store.dispatch({type: 'SHUFFLE'});
+store.dispatch({type: 'DEAL'});
+store.dispatch({type: 'HIT'});
+store.dispatch({type: 'HIT'});
+store.dispatch({type: 'FINISH HAND'});
+
+store.dispatch({type: 'SHUFFLE'});
+store.dispatch({type: 'DEAL'});
+store.dispatch({type: 'HIT'});
+store.dispatch({type: 'FINISH HAND'});
