@@ -1,21 +1,5 @@
 const redux = require('redux');
 
-// Store, Actions, Reducers
-
-//Basic BlackJack example
-
-//intiialize - start with a fresh deck
-//shuffle - shuffle the deck
-//deal -  give two cards to dealer and player
-//hit - give one card to player
-//finish round - return all cards back to deck
-
-// const storeStructure {
-//     deck: [],
-//     dealer: [],
-//     player: [],
-// }
-
 function createDeck() {
     const suits = ['hearts', 'diamonds', 'spades', 'clubs'];
     const faces = [2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'A'];
@@ -42,7 +26,10 @@ const reducer = (state, action) => {
 
     switch (action.type) {
         case 'DEAL': {
-            const copy = [...state.deck]
+            if (state.deck.length < 4) {
+                return state
+            }
+            const copy = [...state.deck];
             return {
                 deck: copy,
                 dealer: [copy.pop(), copy.pop()],
@@ -50,7 +37,13 @@ const reducer = (state, action) => {
             }
         }
         case 'HIT': {
-            const copy = [...state.deck]
+            if (state.deck.length < 4) {
+                return state
+            }
+            if (handValue(state.player) >= 21) {
+                return state
+            }
+            const copy = [...state.deck];
             return {
                 deck: copy,
                 dealer: state.dealer,
