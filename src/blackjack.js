@@ -127,7 +127,27 @@ store.dispatch({type: 'HIT'});
 store.dispatch({type: 'HIT'});
 store.dispatch({type: 'FINISH HAND'});
 
-store.dispatch({type: 'SHUFFLE'});
-store.dispatch({type: 'DEAL'});
-store.dispatch({type: 'HIT'});
-store.dispatch({type: 'FINISH HAND'});
+
+
+const keypress = require('keypress');
+keypress(process.stdin);
+
+const MENU = '(r) shuffle (d) deal (h) hit (f) finish hand (x) quit'
+console.log(MENU);
+
+process.stdin.on('keypress', (ch, key) => {
+    if (key.name === 'x') {
+        process.stdin.pause()
+    } else if (key.name === 'r') {
+        store.dispatch({type: 'SHUFFLE'});
+    } else if (key.name === 'd') {
+        store.dispatch({type: 'DEAL'});
+    } else if (key.name === 'h') {
+        store.dispatch({type: 'HIT'});
+    } else if (key.name === 'f') {
+        store.dispatch({type: 'FINISH HAND'});
+    }
+});
+
+process.stdin.setRawMode(true);
+process.stdin.resume();
